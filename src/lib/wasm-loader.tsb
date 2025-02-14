@@ -1,0 +1,38 @@
+declare global {
+  interface Window {
+    createOthelloModule: any;
+  }
+}
+
+export default async function createModule(options = {}) {
+  if (typeof window === 'undefined') {
+    throw new Error('WASM module can only be loaded in the browser');
+  }
+
+  try {
+    // Load the script directly
+    if (!window.createOthelloModule) {
+      await new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = '/wasm/othello.js';
+        script.onload = resolve;
+        script.onerror = reject;
+        document.head.appendChild(script);
+      });
+    }
+
+    // Now the createOthelloModule function should be available on the window object
+    if (typeof window.createOthelloModule !== 'function') {
+      throw new Error('WASM module initialization function not found');
+    }
+
+    // Initialize the module with options
+    const module = await window.createOthelloModule(options);
+    console.log('Module loaded:', module); // Debug log
+    return module;
+  } catch (error) {
+    console.error('Failed to load WASM module:', error);
+    throw error;
+  }
+}
+
