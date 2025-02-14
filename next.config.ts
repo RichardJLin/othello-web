@@ -9,6 +9,7 @@ const nextConfig: NextConfig = {
   basePath: process.env.GITHUB_PAGES ? '/othello-web' : '',
   // Ensure your assetPrefix matches
   assetPrefix: process.env.GITHUB_PAGES ? '/othello-web/' : '',
+	trailingSlash: true,
   
   webpack: (config, { isServer }) => {
     // Allow importing wasm files
