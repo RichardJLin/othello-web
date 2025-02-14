@@ -115,6 +115,21 @@ const OthelloBoard = () => {
     setShowStartScreen(false);
   }, [gameInstance, updateGameState]);
 
+  const makeAutoPass = useCallback(() => {
+    if (!gameInstance?.game || winner !== null) return;
+    const moveSuccessful = gameInstance.game.makeMove(-1); // -1 indicates passing
+    if (moveSuccessful) {
+      updateGameState(gameInstance.game.getGameState());
+    }
+  }, [gameInstance, winner, updateGameState]);
+
+  // Effect to handle automatic passing when no moves are available
+  useEffect(() => {
+    if (possibleMoves.length === 0 && winner === null) {
+      makeAutoPass();
+    }
+  }, [possibleMoves, winner, makeAutoPass]);
+
   const handleCellClick = useCallback((index: number) => {
     if (!gameInstance?.game || !possibleMoves.includes(index) || winner !== null) return;
 
